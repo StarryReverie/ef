@@ -28,6 +28,7 @@ let
         current feature depends on those features. Usually you will use `efLib.useExplicitly` or
         `efLib.useImplicitly` to create such declaration.
       '';
+      default = [ ];
       example = lib.literalExpression ''
         [
           (efLib.useImplicitly "system/core/environment")
@@ -44,6 +45,7 @@ let
         Those extended features passively accept the data from the current feature. The current
         feature is dependent by those extended features.
       '';
+      default = [ ];
       example = lib.literalExpression ''
         [
           "users/starryreverie/core/shell"
