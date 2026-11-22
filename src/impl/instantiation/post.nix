@@ -7,9 +7,11 @@ in
 let
   # Given a computation result, validate its inner content using additional schemas
   validateComputationResult =
-    valueSchema: # AttrSet | Option declaration or tree of feature's output value
-    extensionSchemas: # AttrSet | Option declaration or tree of other features' extensions used here
-    featureName: # AttrSet | Feature name from which this computation result comes
+    {
+      valueSchema, # AttrSet | Option declaration or tree of feature's output value
+      extensionSchemas, # AttrSet | Option declaration or tree of other features' extensions used here
+      featureName, # AttrSet | Feature name from which this computation result comes
+    }:
     computationResult: # AttrSet | Computation result passed outer schema validation
     let
       validValue = builtins.addErrorContext "while validating the field 'value'" (

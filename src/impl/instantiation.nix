@@ -14,19 +14,25 @@ in
 let
   # Run a feature's computation and validate its result
   instantiateFeature = # ... -> AttrSet
-    extensionSchemas: # AttrSet | Option declaration or tree of all features' extensions
-    computedResults: # AttrSet | Previously computed features' results
-    requiredFeatureNames: # [String] | All required features' names
-    extendingFeatureNames: # [String] | All names of features that extend this feature
+    {
+      extensionSchemas, # AttrSet | Option declaration or tree of all features' extensions
+      computedResults, # AttrSet | Previously computed features' results
+      requiredFeatureNames, # [String] | All required features' names
+      extendingFeatureNames, # [String] | All names of features that extend this feature
+    }:
     feature: # AttrSet | Parsed feature definition
     let
       requisites = builtins.addErrorContext "while preparing requisites for feature '${feature.name}'" (
-        collectRequisites computedResults requiredFeatureNames
+        collectRequisites {
+          inherit requiredFeatureNames;
+        } computedResults
       );
       extensions = builtins.addErrorContext "while preparing extensions for feature '${feature.name}'" (
-        collectExtensions computedResults extendingFeatureNames feature.name (
-          lib.attrsets.attrNames feature.schemas.extensions
-        )
+        collectExtensions {
+          inherit extendingFeatureNames;
+          currentFeatureName = feature.name;
+          extensionNames = lib.attrsets.attrNames feature.schemas.extensions;
+        } computedResults
       );
 
       result =
@@ -40,7 +46,11 @@ let
           );
         in
         builtins.addErrorContext "while evaluating computation of feature '${feature.name}'" (
-          validateComputationResult feature.schemas.value filteredExtensionSchemas feature.name rawResult
+          validateComputationResult {
+            valueSchema = feature.schemas.value;
+            extensionSchemas = filteredExtensionSchemas;
+            featureName = feature.name;
+          } rawResult
         );
     in
     result;

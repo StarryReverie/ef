@@ -2,8 +2,10 @@
 let
   # Collect a feature's required features' computation outputs
   collectRequisites = # ... -> AttrSet | Data to be passed as `requisites` to this feature
+    {
+      requiredFeatureNames, # [String] | All required features' names
+    }:
     computedResults: # AttrSet | Previously computed features' results
-    requiredFeatureNames: # [String] | All required features' names
     lib.attrsets.genAttrs requiredFeatureNames (
       featureName:
       let
@@ -16,10 +18,12 @@ let
 
   # Collect a feature's extension data from other features.
   collectExtensions = # ... -> AttrSet | Data to be passed as `extensions` to this feature
+    {
+      extendingFeatureNames, # [String] | All names of features that extend this feature
+      currentFeatureName, # String | This feature's name
+      extensionNames, # [String] | This feature's all extension points' names
+    }:
     computedResults: # AttrSet | Previously computed features' results
-    extendingFeatureNames: # [String] | All names of features that extend this feature
-    currentFeatureName: # String | This feature's name
-    extensionNames: # [String] | This feature's all extension points' names
     let
       extractExtensionToOptionals =
         extensionName: otherFeatureName:
