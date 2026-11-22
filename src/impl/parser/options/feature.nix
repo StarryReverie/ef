@@ -63,6 +63,7 @@ let
           declaration or tree. You can use a single `lib.mkOption` or write the value part of the
           `options = { ... }` key-value pair.
         '';
+        default = { };
         example = lib.literalExpression ''
           {
             envFile = lib.mkOption {

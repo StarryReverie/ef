@@ -10,6 +10,7 @@ let
         The pure part of result can be consumed by other dependent features actively, via other
         features' `requires` declaration and `requisites` parameter.
       '';
+      default = { };
       example = lib.literalExperssion ''
         {
           envFile = "~/.config/environment.d/60-custom-session-vars.conf";
