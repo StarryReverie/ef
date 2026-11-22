@@ -38,6 +38,7 @@
         devShells = "dev";
         formatter = "dev";
         inputsDev = "dev";
+        libTests = "dev";
       };
     };
 }

@@ -2,6 +2,7 @@
 {
   imports = [
     ./devshells.nix
+    ./tests.nix
   ];
 
   perSystem =
