@@ -1,4 +1,4 @@
-{ lib, use }:
+{ lib, use, ... }:
 let
   # Option tree for a feature definition
   featureOption = {

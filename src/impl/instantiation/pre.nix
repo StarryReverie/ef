@@ -1,4 +1,4 @@
-{ lib, use }:
+{ lib, use, ... }:
 let
   # Collect a feature's required features' computation outputs
   collectRequisites = # ... -> AttrSet | Data to be passed as `requisites` to this feature

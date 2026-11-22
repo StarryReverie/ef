@@ -1,6 +1,7 @@
 {
   lib,
   moduleDir,
+  extraArgs ? { },
 }:
 let
   evaluate = x: builtins.seq x x;
@@ -50,7 +51,7 @@ let
       moduleTree = makeModuleTreeWithEnv moduleEnv dir;
 
       moduleEnv = {
-        inherit lib;
+        inherit lib extraArgs;
 
         use =
           modulePath:

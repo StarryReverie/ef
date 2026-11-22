@@ -1,4 +1,4 @@
-{ lib, use }:
+{ lib, use, ... }:
 let
   # Match a raw attrset against an option tree and return it if valid
   parseWithOption = # ... -> AttrSet | Valid value

@@ -1,4 +1,4 @@
-{ lib, use }:
+{ lib, use, ... }:
 let
   inherit (use "parser.options")
     parseWithOption

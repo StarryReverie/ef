@@ -1,4 +1,4 @@
-{ lib, use }:
+{ lib, use, ... }:
 let
   inherit (use "instantiation.post")
     validateComputationResult
