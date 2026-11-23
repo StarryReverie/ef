@@ -3,18 +3,12 @@ let
   inherit (extraArgs.useEf "dependency")
     makeDependencyGraph
     ;
+  inherit (extraArgs.useEf "dsl")
+    useExplicitly
+    useImplicitly
+    ;
 in
 let
-  useImplicitly = name: {
-    inherit name;
-    isExplicit = false;
-  };
-
-  useExplicitly = name: {
-    inherit name;
-    isExplicit = true;
-  };
-
   makeFeature =
     {
       name,
