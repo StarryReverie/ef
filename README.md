@@ -1,3 +1,5 @@
 # ef
 
-> ef - a tale of modules
+> ef - a fairy tale of modules
+
+ef is an eDSL over Nix module system.
