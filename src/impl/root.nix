@@ -57,9 +57,35 @@ let
       ) graph;
     in
     result;
+
+  # If the effects are Nix modules, add more metadata to them and merge each kind of modules to a
+  # single module. Applying this function to non Nix modules is undefined.
+  effectsToNixModules =
+    runResult: # AttrSet | Result of `runFeatures`
+    let
+      effectKindSet = lib.attrsets.mergeAttrsList (
+        lib.flip lib.mapAttrsToList runResult (_: result: lib.attrsets.mapAttrs (_: _: true) result.effects)
+      );
+
+      addFeatureTag =
+        featureName: effectKind:
+        lib.modules.setDefaultModuleLocation "<ef-computed:feature='${featureName}',effect='${effectKind}'>";
+
+      taggedEffects = lib.attrsets.mapAttrsToList (
+        featureName: result:
+        lib.attrsets.mapAttrs (effectKind: addFeatureTag featureName effectKind) result.effects
+      ) runResult;
+
+      mergedEffects = lib.flip lib.attrsets.mapAttrs effectKindSet (
+        effectKind: _:
+        { imports = lib.attrsets.catAttrs effectKind taggedEffects; }
+      );
+    in
+    mergedEffects;
 in
 {
   inherit
     runFeatures
+    effectsToNixModules
     ;
 }
