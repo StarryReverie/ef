@@ -77,9 +77,9 @@ in
       in
       {
         inherit (parsed) name requires extends;
-        valueKeys = builtins.attrNames parsed.schemas.value;
-        extensionKeys = builtins.attrNames parsed.schemas.extensions;
-        extensionPointKeys = builtins.attrNames parsed.schemas.extensions.variables;
+        valueKeys = lib.attrsets.attrNames parsed.schemas.value;
+        extensionKeys = lib.attrsets.attrNames parsed.schemas.extensions;
+        extensionPointKeys = lib.attrsets.attrNames parsed.schemas.extensions.variables;
         valueConfig = parseWithOption parsed.schemas.value {
           envFile = "/tmp/env";
         };

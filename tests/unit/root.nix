@@ -1,6 +1,7 @@
 { lib, extraArgs, ... }:
 let
   inherit (extraArgs.useEf "root")
+    effectsToNixModules
     runFeatures
     ;
 in
@@ -98,6 +99,83 @@ let
         };
       };
   };
+
+  effectFeatures = {
+    "a" =
+      { lib, ... }:
+      {
+        name = "a";
+        schemas = {
+          value = { };
+          extensions = { };
+        };
+        computation = { ... }: {
+          value = { };
+          extensions = { };
+          effects.nixos = { ... }: {
+            config.result = [ "a" ];
+          };
+          effects.other = { ... }: {
+            config.result = [ "a-other" ];
+          };
+        };
+      };
+
+    "b" =
+      { lib, ... }:
+      {
+        name = "b";
+        schemas = {
+          value = { };
+          extensions = { };
+        };
+        computation = { ... }: {
+          value = { };
+          extensions = { };
+          effects.nixos = {
+            config.result = [ "b" ];
+          };
+          effects.other = {
+            config.result = [ "b-other" ];
+          };
+        };
+      };
+
+    "user-file" =
+      { lib, ... }:
+      {
+        name = "user-file";
+        schemas = {
+          value = { };
+          extensions = { };
+        };
+        computation = { ... }: {
+          value = { };
+          extensions = { };
+          effects.nixos = {
+            _file = "<user-provided>";
+            config.result = [ "user" ];
+          };
+        };
+      };
+
+    "disabled" =
+      { lib, ... }:
+      {
+        name = "disabled";
+        schemas = {
+          value = { };
+          extensions = { };
+        };
+        computation = { ... }: {
+          value = { };
+          extensions = { };
+          effects.nixos = {
+            config.result = [ "disabled" ];
+          };
+        };
+      };
+  };
 in
 {
   "explicit and implicit `requires` are computed with extra arguments" = {
@@ -114,7 +192,7 @@ in
         } features;
       in
       {
-        names = builtins.attrNames result;
+        names = lib.attrsets.attrNames result;
         base = result."base".value;
         app = result."app".value;
         extra = result."extra".value;
@@ -175,7 +253,7 @@ in
         } features;
       in
       {
-        names = builtins.attrNames result;
+        names = lib.attrsets.attrNames result;
         extender = result."extender".extensions;
         hasTarget = result ? "target";
       };
@@ -187,6 +265,69 @@ in
         };
       };
       hasTarget = false;
+    };
+  };
+
+  "effect modules are merged by kind" = {
+    expr =
+      let
+        result = runFeatures {
+          enabledFeatures = [
+            "a"
+            "b"
+            "user-file"
+          ];
+          extraArgs = { };
+        } effectFeatures;
+        merged = effectsToNixModules result;
+        optionsModule = {
+          options.result = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ ];
+          };
+        };
+        sort = lib.lists.sort (a: b: a < b);
+        nixosImports = merged."nixos".imports;
+      in
+      {
+        effectKinds = lib.attrsets.attrNames merged;
+        nixosImportCount = lib.lists.length nixosImports;
+        otherImportCount = lib.lists.length merged."other".imports;
+        nixosValues =
+          sort
+            (lib.evalModules {
+              modules = [
+                optionsModule
+                merged."nixos"
+              ];
+            }).config.result;
+        otherValues =
+          sort
+            (lib.evalModules {
+              modules = [
+                optionsModule
+                merged."other"
+              ];
+            }).config.result;
+        empty = effectsToNixModules { };
+      };
+    expected = {
+      effectKinds = [
+        "nixos"
+        "other"
+      ];
+      nixosImportCount = 3;
+      otherImportCount = 2;
+      nixosValues = [
+        "a"
+        "b"
+        "user"
+      ];
+      otherValues = [
+        "a-other"
+        "b-other"
+      ];
+      empty = { };
     };
   };
 }
