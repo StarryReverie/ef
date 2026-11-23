@@ -1,5 +1,5 @@
 {
-  description = "ef - a tale of modules";
+  description = "ef - a fairy tale of modules";
 
   inputs.flake-parts = {
     url = "github:hercules-ci/flake-parts/main";
