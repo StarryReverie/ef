@@ -13,8 +13,10 @@ in
 let
   # Given a feature definition, check its schema and return it if valid
   parseFeatureDefinition = # ... -> AttrSet | Feature definition that satifies the schema
-    efLib: # AttrSet | Collection of utility functions to be passed to the feature
-    extraArgs: # AttrSet | Extra arguments to be used by the feature
+    {
+      efLib, # AttrSet | Collection of utility functions to be passed to the feature
+      extraArgs, # AttrSet | Extra arguments to be used by the feature
+    }:
     featureDef: # AttrSet -> AttrSet | Target feature definition
     let
       featureArgs = {
