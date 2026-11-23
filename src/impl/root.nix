@@ -16,7 +16,7 @@ in
 let
   runFeatures = # ... -> AttrSet | Computation result of all features
     {
-      explicitlyEnabledFeatureNames, # [String] | All explicitly enabled features' names
+      enabledFeatures, # [String] | All explicitly enabled features' names
       extraArgs, # AttrSet | Extra arguments to pass to features
     }:
     allRawFeatures: # AttrSet | All parsed feature definitions
@@ -30,7 +30,7 @@ let
       ) allRawFeatures;
 
       result = runFeatureComputations {
-        inherit explicitlyEnabledFeatureNames;
+        explicitlyEnabledFeatureNames = enabledFeatures;
       } allFeatures;
     in
     result;

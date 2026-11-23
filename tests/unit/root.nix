@@ -104,7 +104,7 @@ in
     expr =
       let
         result = runFeatures {
-          explicitlyEnabledFeatureNames = [
+          enabledFeatures = [
             "app"
             "extra"
           ];
@@ -143,7 +143,7 @@ in
     expr =
       let
         result = runFeatures {
-          explicitlyEnabledFeatureNames = [
+          enabledFeatures = [
             "target"
             "extender"
           ];
@@ -170,7 +170,7 @@ in
     expr =
       let
         result = runFeatures {
-          explicitlyEnabledFeatureNames = [ "extender" ];
+          enabledFeatures = [ "extender" ];
           extraArgs = { };
         } features;
       in
