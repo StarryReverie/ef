@@ -6,7 +6,7 @@ ef is an eDSL over Nix module system.
 
 ## Overview
 
-We NixOS users all write NixOS configurations using the Nix module system and existing libraries such as `nixpkgs/nixos` and Home Manager. As the configuration evolves, the drawbacks of the Nix module system emerges gradually and we can hardly manage these tightly coupled "modules".
+We NixOS users all write NixOS configurations using the Nix module system and existing libraries such as `nixpkgs/nixos` and Home Manager. As the configuration evolves, the drawbacks of the Nix module system emerge gradually and we can hardly manage these tightly coupled "modules".
 
 ef is designed to solve some of Nix module system's shortcomings by adding an additional abstraction layer over it while making use of the existing infrastructure. In short, ef has the following benefits:
 
@@ -67,3 +67,53 @@ A feature defines the types (a.k.a. schemas) of its computation value and the ex
 The `computation` function is how a feature produces its value and effects. This function accepts at least two parameters `requisites` and `extensions`. `requisites` contains values of all features required by the current feature. `extensions` consist of other features' extension data to the current feature, grouped by this feature's extension point name and other feature's name. The result of the `computation` function consists of `value`, `extensions` and `effects`.
 
 The canonical schema definitons of feature and feature's computation result are [`feature.nix`](./src/impl/parser/options/feature.nix) and [`computation.nix`](./src/impl/parser/options/computation.nix)
+
+### Dependency and Data Flow
+
+Features can depend on other features. In ef, the dependency is strict. `requires` and `extends` declarations control what other features the current feature can depend on and extend. Features are not allowed to pass data to or from other features, if it doesn't declare its requisites in `requires` or extension targets in `extends`.
+
+The dependency graph resolution needs you to provide a set of explicitly enabled features. Eventually all features included in the dependency closure are all enabled. In terms of `requires` and `extends` dependcy, only the former one will be taken into account when calculating the closure.
+
+Dependency relationship introduced by `requires` has two kinds: `useExplicitly` and `useImplicitly`. If feature `A` requires feature `B` via `useExplicitly`, then feature `B` must also be enabled explicitly when feature `A` is enabled explicitly. In contrast, `useImplicitly` always enable a feature's dependencies if itself is enabled.
+
+Dependency relationship of `extends` is passive. There is no relationship between whether two sides of a `extends` are enabled respectively or not.
+
+Dependency graph must be a directed acyclic graph (DAG). Because I'm convinced that cyclic dependency is evil, which should be got rid of as an anti-pattern. Removing cycles from your feature graph makes it easier to reason about.
+
+### Effects
+
+Effects are generated from feature's `computation` functions. In theory, the feature can be modeled as a `Writer w a` monad where `w` is the effect and `a` is the pure computation result, as Nix modules are `Monoid`s and can be `<>`-ed using `lib.mkMerge` or `imports = [ ... ]`. However, it's almost impossible to implement the `Functor`/`Applicative`/`Monad` instance for features in *Fake Haskell Compiled into Bash* (Nix).
+
+ef is designed to be an eDSL over Nix module system, so the most apparent usecase of effects is Nix modules. The `effects` field in the feature's computation result is an attrset whose key is the kind of Nix modules, such as `nixos` or `homeManager`. ef provides the function `effectsToNixModules` that helps merge Nix modules of the same kind into a single module for each kind, then you can pass it to e.g. `lib.evalModules`, `lib.nixosSystem`, and so on.
+
+But ef is capable of producing other things as effects. You can return anythings from a `computation` function and merge them by yourselves.
+
+## Examples
+
+This repository use integration test cases as the examples. Currently the following integration tests are available:
+
+- [Minimal](./tests/integration/minimal/features/)
+
+You can run the example a.k.a test using the following commands:
+
+```bash
+# Interactive NixOS VM
+nix run '.#integrationTests.minimal.vm'
+# NixOS VM test
+nix build '.#integrationTests.minimal.test'
+```
+
+For non-flake users:
+
+```bash
+# Interactive NixOS VM
+nix-build tests/integration.nix -A minimal.vm && ./result/bin/run-nixos-vm
+# NixOS VM test
+nix-build tests/integration.nix -A minimal.test
+```
+
+## License
+
+This project is licensed under the [MIT license](./LICENSE).
+
+Copyright (C) 2026 Justin Chen
