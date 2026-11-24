@@ -1,6 +1,8 @@
 { config, inputs, ... }:
 {
-  imports = [ ];
+  imports = [
+    ./lib.nix
+  ];
 
   perSystem =
     { system, ... }:
