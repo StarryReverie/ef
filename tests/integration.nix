@@ -16,6 +16,14 @@ let
         })
         // {
           vm = (pkgs.nixos self.module).config.system.build.vm;
+
+          test = pkgs.testers.runNixOSTest {
+            inherit name;
+            imports = lib.singleton ({
+              nodes.vm = self.module;
+              testScript = self.testScript;
+            });
+          };
         }
       );
     })

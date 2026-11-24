@@ -13,4 +13,5 @@ let
 in
 {
   module = (efApi.effectsToNixModules runResult).nixos;
+  testScript = builtins.readFile ./test-script.py;
 }

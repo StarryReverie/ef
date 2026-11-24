@@ -17,7 +17,7 @@ let
   runFeatures = # ... -> AttrSet | Computation result of all features
     {
       enabledFeatures, # [String] | All explicitly enabled features' names
-      extraArgs, # AttrSet | Extra arguments to pass to features
+      extraArgs ? { }, # AttrSet | Extra arguments to pass to features
     }:
     allRawFeatures: # AttrSet | All parsed feature definitions
     let
