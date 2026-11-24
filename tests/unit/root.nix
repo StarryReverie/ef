@@ -100,7 +100,7 @@ let
       };
   };
 
-  effectFeatures = {
+  effectfulFeatures = {
     "a" =
       { lib, ... }:
       {
@@ -181,15 +181,16 @@ in
   "explicit and implicit `requires` are computed with extra arguments" = {
     expr =
       let
-        result = runFeatures {
-          enabledFeatures = [
-            "app"
-            "extra"
-          ];
-          extraArgs = {
-            greeting = "hello";
-          };
-        } features;
+        result =
+          (runFeatures {
+            enabledFeatures = [
+              "app"
+              "extra"
+            ];
+            extraArgs = {
+              greeting = "hello";
+            };
+          } features).result;
       in
       {
         names = lib.attrsets.attrNames result;
@@ -220,13 +221,14 @@ in
   "incoming extensions reach enabled targets" = {
     expr =
       let
-        result = runFeatures {
-          enabledFeatures = [
-            "target"
-            "extender"
-          ];
-          extraArgs = { };
-        } features;
+        result =
+          (runFeatures {
+            enabledFeatures = [
+              "target"
+              "extender"
+            ];
+            extraArgs = { };
+          } features).result;
       in
       {
         target = result."target".value;
@@ -247,10 +249,11 @@ in
   "extensions to disabled targets are validated but not delivered" = {
     expr =
       let
-        result = runFeatures {
-          enabledFeatures = [ "extender" ];
-          extraArgs = { };
-        } features;
+        result =
+          (runFeatures {
+            enabledFeatures = [ "extender" ];
+            extraArgs = { };
+          } features).result;
       in
       {
         names = lib.attrsets.attrNames result;
@@ -278,7 +281,7 @@ in
             "user-file"
           ];
           extraArgs = { };
-        } effectFeatures;
+        } effectfulFeatures;
         merged = effectsToNixModules result;
         optionsModule = {
           options.result = lib.mkOption {
@@ -309,7 +312,7 @@ in
                 merged."other"
               ];
             }).config.result;
-        empty = effectsToNixModules { };
+        empty = effectsToNixModules { result = { }; };
       };
     expected = {
       effectKinds = [

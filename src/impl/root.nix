@@ -53,7 +53,12 @@ let
         } allFeatures.${featureName}
       ) graph;
     in
-    result;
+    {
+      inherit result;
+      internal = {
+        inherit graph;
+      };
+    };
 
   # If the effects are Nix modules, add more metadata to them and merge each kind of modules to a
   # single module. Applying this function to non Nix modules is undefined.
@@ -61,7 +66,7 @@ let
     runResult: # AttrSet | Result of `runFeatures`
     let
       effectKindSet = lib.attrsets.mergeAttrsList (
-        lib.flip lib.mapAttrsToList runResult (_: result: lib.attrsets.mapAttrs (_: _: true) result.effects)
+        lib.mapAttrsToList (_: result: lib.attrsets.mapAttrs (_: _: true) result.effects) runResult.result
       );
 
       addFeatureTag =
@@ -71,7 +76,7 @@ let
       taggedEffects = lib.attrsets.mapAttrsToList (
         featureName: result:
         lib.attrsets.mapAttrs (effectKind: addFeatureTag featureName effectKind) result.effects
-      ) runResult;
+      ) runResult.result;
 
       mergedEffects = lib.attrsets.mapAttrs (effectKind: _: {
         imports = lib.attrsets.catAttrs effectKind taggedEffects;
