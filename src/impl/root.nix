@@ -21,10 +21,19 @@ let
     }:
     allRawFeatures: # AttrSet | All parsed feature definitions
     let
-      allFeatures = lib.attrsets.mapAttrs (lib.const (parseFeatureDefinition {
-        inherit efLib;
-        inherit extraArgs;
-      })) allRawFeatures;
+      allFeatures = lib.attrsets.mapAttrs (
+        name: rawFeature:
+        let
+          feature = parseFeatureDefinition {
+            inherit efLib;
+            inherit extraArgs;
+          } rawFeature;
+        in
+        if feature.name == name then
+          feature
+        else
+          builtins.throw "feature sets name='${feature.name}' in its definition, but the outer attrset's key is ${name}"
+      ) allRawFeatures;
 
       result = runFeatureComputations {
         explicitlyEnabledFeatureNames = enabledFeatures;
