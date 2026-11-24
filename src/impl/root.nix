@@ -21,13 +21,10 @@ let
     }:
     allRawFeatures: # AttrSet | All parsed feature definitions
     let
-      allFeatures = lib.attrsets.mapAttrs (
-        _:
-        parseFeatureDefinition {
-          inherit efLib;
-          inherit extraArgs;
-        }
-      ) allRawFeatures;
+      allFeatures = lib.attrsets.mapAttrs (lib.const (parseFeatureDefinition {
+        inherit efLib;
+        inherit extraArgs;
+      })) allRawFeatures;
 
       result = runFeatureComputations {
         explicitlyEnabledFeatureNames = enabledFeatures;
@@ -76,10 +73,9 @@ let
         lib.attrsets.mapAttrs (effectKind: addFeatureTag featureName effectKind) result.effects
       ) runResult;
 
-      mergedEffects = lib.flip lib.attrsets.mapAttrs effectKindSet (
-        effectKind: _:
-        { imports = lib.attrsets.catAttrs effectKind taggedEffects; }
-      );
+      mergedEffects = lib.attrsets.mapAttrs (effectKind: _: {
+        imports = lib.attrsets.catAttrs effectKind taggedEffects;
+      }) effectKindSet;
     in
     mergedEffects;
 in
