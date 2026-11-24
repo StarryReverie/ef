@@ -8,7 +8,7 @@
     { system, pkgsDev, ... }:
     let
       integrationTests = import ../../../tests/integration.nix {
-        inherit system;
+        inherit inputs system;
         pkgs = pkgsDev;
       };
     in

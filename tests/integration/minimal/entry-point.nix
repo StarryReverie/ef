@@ -1,4 +1,8 @@
-{ pkgs, efApi }:
+{
+  inputs,
+  pkgs,
+  efApi,
+}:
 let
   features = {
     "configuration" = import ./features/configuration.nix;
@@ -8,7 +12,7 @@ let
     enabledFeatures = [
       "configuration"
     ];
-    extraArgs = { inherit pkgs; };
+    extraArgs = { inherit inputs pkgs; };
   } features;
 in
 {

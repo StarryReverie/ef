@@ -1,6 +1,7 @@
 {
+  inputs ? (import ../.).inputsDev,
   system ? builtins.currentSystem,
-  pkgs ? (import ../.).inputs.nixpkgs.legacyPackages.${system},
+  pkgs ? inputs.nixpkgs.legacyPackages.${system},
   lib ? pkgs.lib,
 }:
 let
@@ -12,7 +13,7 @@ let
       ${name} = lib.fix (
         self:
         (import ./integration/${name}/entry-point.nix {
-          inherit pkgs efApi;
+          inherit inputs pkgs efApi;
         })
         // {
           vm = (pkgs.nixos self.module).config.system.build.vm;
