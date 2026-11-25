@@ -16,6 +16,7 @@ let
     {
       efLib, # AttrSet | Collection of utility functions to be passed to the feature
       extraArgs, # AttrSet | Extra arguments to be used by the feature
+      featureName, # String | Name of this feature
     }:
     featureDef: # AttrSet -> AttrSet | Target feature definition
     let
@@ -23,12 +24,21 @@ let
         inherit lib efLib extraArgs;
       };
     in
-    parseWithOption featureOption (featureDef featureArgs);
+    parseWithOption {
+      options = featureOption;
+      location = "<ef-feature:feature='${featureName}'>";
+    } (featureDef featureArgs);
 
   # Given a feature computation's result, check its schema and return it if valid
   parseFeatureComputation = # ... -> AttrSet | Valid computation result
+    {
+      featureName, # String | Name of this feature
+    }:
     computationResult: # AttrSet | Raw computation result
-    parseWithOption computationOption computationResult;
+    parseWithOption {
+      options = computationOption;
+      location = "<ef-computation:feature='${featureName}'>";
+    } computationResult;
 in
 {
   inherit

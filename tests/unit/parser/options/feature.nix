@@ -10,7 +10,10 @@ in
 let
   computation = { ... }: { };
 
-  parseFeature = parseWithOption featureOption;
+  parseFeature = parseWithOption {
+    options = featureOption;
+    location = "<test-feature>";
+  };
 in
 {
   "a minimal feature definition uses default values" = {
@@ -80,12 +83,24 @@ in
         valueKeys = lib.attrsets.attrNames parsed.schemas.value;
         extensionKeys = lib.attrsets.attrNames parsed.schemas.extensions;
         extensionPointKeys = lib.attrsets.attrNames parsed.schemas.extensions.variables;
-        valueConfig = parseWithOption parsed.schemas.value {
-          envFile = "/tmp/env";
-        };
-        extensionConfig = parseWithOption parsed.schemas.extensions.variables {
-          anySession.EDITOR = "hx";
-        };
+        valueConfig =
+          parseWithOption
+            {
+              options = parsed.schemas.value;
+              location = "<test-value>";
+            }
+            {
+              envFile = "/tmp/env";
+            };
+        extensionConfig =
+          parseWithOption
+            {
+              options = parsed.schemas.extensions.variables;
+              location = "<test-extension>";
+            }
+            {
+              anySession.EDITOR = "hx";
+            };
       };
     expected = {
       name = "test/full";
@@ -123,7 +138,7 @@ in
     };
     expectedError = {
       type = "ThrownError";
-      message = "not of type";
+      message = "<test-feature>";
     };
   };
 

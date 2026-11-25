@@ -8,7 +8,10 @@ let
     ;
 in
 let
-  parseComputation = parseWithOption computationOption;
+  parseComputation = parseWithOption {
+    options = computationOption;
+    location = "<test-computation>";
+  };
 in
 {
   "explicit fields are preserved and defaults are applied" = {
@@ -54,7 +57,7 @@ in
     };
     expectedError = {
       type = "ThrownError";
-      message = "not of type";
+      message = "<test-computation>";
     };
   };
 

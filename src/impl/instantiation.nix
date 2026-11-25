@@ -37,7 +37,9 @@ let
 
       result =
         let
-          rawResult = parseFeatureComputation (feature.computation { inherit requisites extensions; });
+          rawResult = parseFeatureComputation {
+            featureName = feature.name;
+          } (feature.computation { inherit requisites extensions; });
 
           filteredExtensionSchemas = lib.attrsets.genAttrs feature.extends (
             otherFeatureName:

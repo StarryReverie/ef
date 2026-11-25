@@ -27,12 +27,13 @@ let
           feature = parseFeatureDefinition {
             inherit efLib;
             inherit extraArgs;
+            featureName = name;
           } rawFeature;
         in
         if feature.name == name then
           feature
         else
-          builtins.throw "feature sets name='${feature.name}' in its definition, but the outer attrset's key is ${name}"
+          builtins.throw "feature sets name='${feature.name}' in its definition, but the outer attrset's key is '${name}'"
       ) allRawFeatures;
 
       result = runFeatureComputations {
@@ -80,7 +81,7 @@ let
 
       addFeatureTag =
         featureName: effectKind:
-        lib.modules.setDefaultModuleLocation "<ef-computed:feature='${featureName}',effect='${effectKind}'>";
+        lib.modules.setDefaultModuleLocation "<ef-computation:feature='${featureName}',scope='effect',kind='${effectKind}'>";
 
       taggedEffects = lib.attrsets.mapAttrsToList (
         featureName: result:

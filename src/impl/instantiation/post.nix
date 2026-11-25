@@ -14,7 +14,7 @@ let
     }:
     computationResult: # AttrSet | Computation result passed outer schema validation
     let
-      validValue = builtins.addErrorContext "while validating the field 'value'" (
+      validValue =
         let
           # Make sure `parseWithOption` always receives an option tree rather a naked option.
           valueOptionTree = {
@@ -25,51 +25,45 @@ let
             value = computationResult.value;
           };
 
-          result = parseWithOption valueOptionTree valueConfig;
+          result = parseWithOption {
+            options = valueOptionTree;
+            location = "<ef-computation:feature='${featureName}',scope='value'>";
+          } valueConfig;
         in
-        result.value
-      );
+        result.value;
 
-      validExtensions = builtins.addErrorContext "while validating the field 'extensions'" (
-        lib.flip lib.attrsets.mapAttrs computationResult.extensions (
-          otherFeatureName: otherExtensionAttrs:
-          lib.flip lib.attrsets.mapAttrs otherExtensionAttrs (
-            otherExtensionName: extensionContent:
-            let
-              otherFeatureExtensionSchemas =
-                extensionSchemas.${otherFeatureName}
-                  or (builtins.throw "schemas for feature '${otherFeatureName}' don't exist");
-              otherExtensionSchema =
-                otherFeatureExtensionSchemas.${otherExtensionName}
-                  or (builtins.throw "schema for extension '${otherExtensionName}' from '${otherFeatureName}' doesn't exist");
-            in
-            builtins.addErrorContext
-              "while validating extension '${otherExtensionName}' from '${otherFeatureName}'"
-              (
-                let
-                  extensionOptionTree = {
-                    extension = otherExtensionSchema;
-                  };
-                  extensionConfig = {
-                    extension = extensionContent;
-                  };
-                  result = parseWithOption extensionOptionTree extensionConfig;
-                in
-                result.extension
-              )
-          )
+      validExtensions = lib.flip lib.attrsets.mapAttrs computationResult.extensions (
+        otherFeatureName: otherExtensionAttrs:
+        lib.flip lib.attrsets.mapAttrs otherExtensionAttrs (
+          otherExtensionName: extensionContent:
+          let
+            otherFeatureExtensionSchemas =
+              extensionSchemas.${otherFeatureName}
+                or (builtins.throw "schemas for feature '${otherFeatureName}' don't exist or that feature is not declared in `extends`");
+            otherExtensionSchema =
+              otherFeatureExtensionSchemas.${otherExtensionName}
+                or (builtins.throw "schema for extension '${otherExtensionName}' from '${otherFeatureName}' doesn't exist");
+
+            extensionOptionTree = {
+              extension = otherExtensionSchema;
+            };
+            extensionConfig = {
+              extension = extensionContent;
+            };
+
+            result = parseWithOption {
+              options = extensionOptionTree;
+              location = "<ef-computation:feature='${featureName}',scope='extension',to='${otherFeatureName}',extension='${otherExtensionName}'>";
+            } extensionConfig;
+          in
+          result.extension
         )
       );
 
-      result =
-        builtins.addErrorContext "while validating the computation result of feature '${featureName}'"
-          (
-            computationResult
-            // {
-              value = validValue;
-              extensions = validExtensions;
-            }
-          );
+      result = computationResult // {
+        value = validValue;
+        extensions = validExtensions;
+      };
     in
     result;
 in
