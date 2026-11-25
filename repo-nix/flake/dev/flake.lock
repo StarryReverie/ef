@@ -35,6 +35,19 @@
         "type": "github"
       }
     },
+    "nix-maid": {
+      "locked": {
+        "lastModified": 1795368880,
+        "narHash": "sha256-KwipEAmXRwCpFccoUXkE7bw4Rg3Fqlm0GpSVNLlvCTU=",
+        "rev": "d104b7497d15a593c3b5d6200d392320d626892a",
+        "type": "tarball",
+        "url": "https://codeberg.org/api/v1/repos/viperML/nix-maid/archive/d104b7497d15a593c3b5d6200d392320d626892a.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://codeberg.org/viperML/nix-maid/archive/master.tar.gz"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1795085501,
@@ -55,6 +68,7 @@
       "inputs": {
         "flake-compat": "flake-compat",
         "flake-parts": "flake-parts",
+        "nix-maid": "nix-maid",
         "nixpkgs": "nixpkgs",
         "systems": "systems"
       }

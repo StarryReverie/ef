@@ -22,5 +22,9 @@
     flake = false;
   };
 
+  inputs.nix-maid = {
+    url = "https://codeberg.org/viperML/nix-maid/archive/master.tar.gz";
+  };
+
   outputs = _inputs: { };
 }
