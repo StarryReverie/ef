@@ -24,7 +24,7 @@ let
         Pure part of a feature's computation result passed to other features.
 
         Pure extension data can be consumed by other dependent features passively, via the current
-        feature's `extends` declaration and other features' `extensions` parameter. Those features
+        feature's `extends` declaration and other features' `rawExtensions` parameter. Those features
         only declare their extension point schema and will receive all extension data from outside
         when doing their own computation.
 

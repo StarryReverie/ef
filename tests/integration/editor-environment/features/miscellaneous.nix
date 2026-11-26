@@ -7,7 +7,7 @@
 {
   name = "miscellaneous";
 
-  computation = { requisites, extensions, ... }: {
+  computation = { requisites, rawExtensions, ... }: {
     effects."nixos" = { config, pkgs, ... }: {
       imports = [
         extraArgs.inputs.nix-maid.nixosModules.default

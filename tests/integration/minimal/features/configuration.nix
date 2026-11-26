@@ -2,7 +2,7 @@
 {
   name = "configuration";
 
-  computation = { requisites, extensions, ... }: {
+  computation = { requisites, rawExtensions, ... }: {
     effects."nixos" = { config, pkgs, ... }: {
       environment.loginShellInit = ''
         echo 'Welcome to NixOS using ef'

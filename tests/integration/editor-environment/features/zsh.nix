@@ -11,7 +11,7 @@
     (efLib.useImplicitly "shell")
   ];
 
-  computation = { requisites, extensions, ... }: {
+  computation = { requisites, rawExtensions, ... }: {
     effects."nixos" = { config, pkgs, ... }: {
       programs.zsh.enable = true;
 

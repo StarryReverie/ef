@@ -4,7 +4,7 @@ let
     validateComputationResult
     ;
   inherit (use "instantiation.pre")
-    collectExtensions
+    collectRawExtensions
     collectRequisites
     ;
   inherit (use "parser")
@@ -27,8 +27,8 @@ let
           inherit requiredFeatureNames;
         } computedResults
       );
-      extensions = builtins.addErrorContext "while preparing extensions for feature '${feature.name}'" (
-        collectExtensions {
+      rawExtensions = builtins.addErrorContext "while preparing extensions for feature '${feature.name}'" (
+        collectRawExtensions {
           inherit extendingFeatureNames;
           currentFeatureName = feature.name;
           extensionNames = lib.attrsets.attrNames feature.schemas.extensions;
@@ -39,7 +39,7 @@ let
         let
           rawResult = parseFeatureComputation {
             featureName = feature.name;
-          } (feature.computation { inherit requisites extensions; });
+          } (feature.computation { inherit requisites rawExtensions; });
 
           filteredExtensionSchemas = lib.attrsets.genAttrs feature.extends (
             otherFeatureName:

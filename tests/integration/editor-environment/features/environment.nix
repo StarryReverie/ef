@@ -18,7 +18,7 @@
     };
   };
 
-  computation = { requisites, extensions, ... }: {
+  computation = { requisites, rawExtensions, ... }: {
     extensions."shell"."profile" = {
       priority = 1000;
       content = ''
@@ -28,10 +28,12 @@
 
     effects."nixos" = { config, pkgs, ... }: {
       users.users."root".maid = {
-        file.xdg_config."environment.d/60-custom-session-vars.conf".text = lib.pipe extensions."variables" [
-          (lib.attrsets.concatMapAttrs (_: ext: ext.anySession))
-          (lib.strings.concatMapAttrsStringSep "\n" (k: v: "${k}=${v}"))
-        ];
+        file.xdg_config."environment.d/60-custom-session-vars.conf".text =
+          lib.pipe rawExtensions."variables"
+            [
+              (lib.attrsets.concatMapAttrs (_: ext: ext.anySession))
+              (lib.strings.concatMapAttrsStringSep "\n" (k: v: "${k}=${v}"))
+            ];
       };
     };
   };

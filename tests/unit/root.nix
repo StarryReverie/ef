@@ -74,9 +74,9 @@ let
             content = lib.mkOption { type = lib.types.str; };
           };
         };
-        computation = { extensions, ... }: {
+        computation = { rawExtensions, ... }: {
           value = {
-            got = extensions.profile."extender".content;
+            got = rawExtensions.profile."extender".content;
           };
           extensions = { };
         };

@@ -123,9 +123,9 @@ let
       example = lib.literalExpression ''
         # `requisites.<otherFeatureName>.<...>`
         #   - e.g. `requisites."users/starryreverie/core/constants".hostName`
-        # `extensions.<selfExtensionName>.<otherFeatureName>.<...>`
-        #   - e.g. `extensions.variables."users/starryreverie/applications/helix".anySession.EDITOR`
-        { requisites, extensions, ... }: {
+        # `rawExtensions.<selfExtensionName>.<otherFeatureName>.<...>`
+        #   - e.g. `rawExtensions.variables."users/starryreverie/applications/helix".anySession.EDITOR`
+        { requisites, rawExtensions, ... }: {
           value = {
             envFile = "~/.config/environment.d/60-custom-session-vars.conf";
           };

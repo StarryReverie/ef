@@ -16,8 +16,8 @@ let
       featureResult.value
     );
 
-  # Collect a feature's extension data from other features.
-  collectExtensions = # ... -> AttrSet | Data to be passed as `extensions` to this feature
+  # Collect a feature's extension data from other features without merging.
+  collectRawExtensions = # ... -> AttrSet | Data to be passed as `extensions` to this feature
     {
       extendingFeatureNames, # [String] | All names of features that extend this feature
       currentFeatureName, # String | This feature's name
@@ -51,7 +51,7 @@ let
 in
 {
   inherit
-    collectExtensions
+    collectRawExtensions
     collectRequisites
     ;
 }

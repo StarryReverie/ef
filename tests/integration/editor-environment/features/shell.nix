@@ -31,11 +31,11 @@
     };
   };
 
-  computation = { requisites, extensions, ... }: {
+  computation = { requisites, rawExtensions, ... }: {
     value = {
-      aliases = lib.attrsets.concatMapAttrs (_: lib.id) extensions."aliases";
+      aliases = lib.attrsets.concatMapAttrs (_: lib.id) rawExtensions."aliases";
 
-      profile = lib.pipe extensions."profile" [
+      profile = lib.pipe rawExtensions."profile" [
         lib.attrsets.attrValues
         (lib.lists.sortOn (p: p.priority))
         (lib.strings.concatMapStringsSep "\n" (p: p.content))
