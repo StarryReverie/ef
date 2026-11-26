@@ -16,6 +16,85 @@ ef is designed to solve some of Nix module system's shortcomings by adding an ad
 - Minimal and composable
 - Compatible with both flake and non-flake
 
+## Getting Started
+
+ef is available as a flake input. Without flakes, `(import "${sources.ef}/src/default.nix").mkLib { inherit lib; }` can be used to obtain the API, where `sources` contains a pinned revision of ef.
+
+In ef, you need to write *feature*, the unit of configurations. Features are passed to `runFeatures`, and `effectsToNixModules` turns the resulting effects into Nix modules. The `.nixos` module is then passed to `lib.nixosSystem`:
+
+```nix
+# flake.nix
+{
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  inputs.ef.url = "github:StarryReverie/ef-edsl";
+  inputs.ef.inputs.nixpkgs.follows = "nixpkgs";
+
+  outputs = { nixpkgs, ef, ... }:
+    let
+      features = {
+        hello = import ./features/hello.nix;
+      };
+      # You can also use `ef.mkLib { lib = nixpkgs.lib; }` to get a `ef.lib`.
+      runResult = ef.lib.runFeatures {
+        enabledFeatures = [ "hello" ];
+      } features;
+    in
+    {
+      nixosConfigurations.myhost = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          (ef.lib.effectsToNixModules runResult).nixos
+          ./configuration.nix
+          ./hardware-configuration.nix
+          # ...
+        ];
+      };
+    };
+}
+```
+
+A minimal feature adds a package through a NixOS effect:
+
+```nix
+# features/hello.nix
+{ lib, efLib, ... }:
+{
+  name = "hello";
+  computation = { requisites, extensions, ... }: {
+    effects."nixos" = { config, pkgs, ... }: {
+      environment.systemPackages = [ pkgs.hello ];
+    };
+  };
+}
+```
+
+Please read the [Concepts](#Concepts) for more information.
+
+## Examples
+
+This repository uses integration test cases as the examples. Currently the following integration tests are available:
+
+- [Minimal](./tests/integration/minimal/)
+- [Editor Environment](./tests/integration/editor-environment/)
+
+You can run the example a.k.a test using the following commands:
+
+```bash
+# Interactive NixOS VM
+nix run '.#integrationTests.minimal.vm'
+# NixOS VM test
+nix build '.#integrationTests.minimal.test'
+```
+
+For non-flake users:
+
+```bash
+# Interactive NixOS VM
+nix-build tests/integration.nix -A minimal.vm && ./result/bin/run-nixos-vm
+# NixOS VM test
+nix-build tests/integration.nix -A minimal.test
+```
+
 ## Concepts
 
 ### Features
@@ -87,30 +166,6 @@ Effects are generated from feature's `computation` functions. In theory, the fea
 ef is designed to be an eDSL over Nix module system, so the most apparent usecase of effects is Nix modules. The `effects` field in the feature's computation result is an attrset whose key is the kind of Nix modules, such as `nixos` or `homeManager`. ef provides the function `effectsToNixModules` that helps merge Nix modules of the same kind into a single module for each kind, then you can pass it to e.g. `lib.evalModules`, `lib.nixosSystem`, and so on.
 
 But ef is capable of producing other things as effects. You can return anythings from a `computation` function and merge them by yourselves.
-
-## Examples
-
-This repository use integration test cases as the examples. Currently the following integration tests are available:
-
-- [Minimal](./tests/integration/minimal/features/)
-
-You can run the example a.k.a test using the following commands:
-
-```bash
-# Interactive NixOS VM
-nix run '.#integrationTests.minimal.vm'
-# NixOS VM test
-nix build '.#integrationTests.minimal.test'
-```
-
-For non-flake users:
-
-```bash
-# Interactive NixOS VM
-nix-build tests/integration.nix -A minimal.vm && ./result/bin/run-nixos-vm
-# NixOS VM test
-nix-build tests/integration.nix -A minimal.test
-```
 
 ## License
 
