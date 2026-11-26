@@ -6,6 +6,7 @@ let
   inherit (use "instantiation.pre")
     collectRawExtensions
     collectRequisites
+    mergeRawExtensions
     ;
   inherit (use "parser")
     parseFeatureComputation
@@ -27,19 +28,29 @@ let
           inherit requiredFeatureNames;
         } computedResults
       );
-      rawExtensions = builtins.addErrorContext "while preparing extensions for feature '${feature.name}'" (
-        collectRawExtensions {
-          inherit extendingFeatureNames;
-          currentFeatureName = feature.name;
-          extensionNames = lib.attrsets.attrNames feature.schemas.extensions;
-        } computedResults
-      );
+      rawExtensions =
+        builtins.addErrorContext "while preparing extensions for feature '${feature.name}'"
+          (
+            collectRawExtensions {
+              inherit extendingFeatureNames;
+              currentFeatureName = feature.name;
+              extensionNames = lib.attrsets.attrNames feature.schemas.extensions;
+            } computedResults
+          );
+      extensions =
+        builtins.addErrorContext "while preparing merged extensions for feature '${feature.name}'"
+          (
+            mergeRawExtensions {
+              extensionSchemas = feature.schemas.extensions;
+              featureName = feature.name;
+            } rawExtensions
+          );
 
       result =
         let
           rawResult = parseFeatureComputation {
             featureName = feature.name;
-          } (feature.computation { inherit requisites rawExtensions; });
+          } (feature.computation { inherit requisites extensions rawExtensions; });
 
           filteredExtensionSchemas = lib.attrsets.genAttrs feature.extends (
             otherFeatureName:

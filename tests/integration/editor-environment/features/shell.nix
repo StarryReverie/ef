@@ -21,25 +21,15 @@
     type = lib.types.attrsOf lib.types.str;
   };
 
-  schemas.extensions."profile" = {
-    content = lib.mkOption {
-      type = lib.types.lines;
-    };
-
-    priority = lib.mkOption {
-      type = lib.types.int;
-    };
+  schemas.extensions."profile" = lib.mkOption {
+    type = lib.types.lines;
   };
 
-  computation = { requisites, rawExtensions, ... }: {
+  computation = { requisites, extensions, ... }: {
     value = {
-      aliases = lib.attrsets.concatMapAttrs (_: lib.id) rawExtensions."aliases";
+      aliases = extensions."aliases";
 
-      profile = lib.pipe rawExtensions."profile" [
-        lib.attrsets.attrValues
-        (lib.lists.sortOn (p: p.priority))
-        (lib.strings.concatMapStringsSep "\n" (p: p.content))
-      ];
+      profile = extensions."profile";
     };
   };
 }

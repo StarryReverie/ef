@@ -12,7 +12,7 @@
     "shell"
   ];
 
-  computation = { requisites, rawExtensions, ... }: {
+  computation = { requisites, extensions, ... }: {
     extensions."environment"."variables" = {
       anySession = {
         "EDITOR" = "hx";

@@ -123,6 +123,8 @@ let
       example = lib.literalExpression ''
         # `requisites.<otherFeatureName>.<...>`
         #   - e.g. `requisites."users/starryreverie/core/constants".hostName`
+        # `extensions.<selfExtensionName>.<...>`
+        #   - e.g. `rawExtensions.variables.anySession.EDITOR`
         # `rawExtensions.<selfExtensionName>.<otherFeatureName>.<...>`
         #   - e.g. `rawExtensions.variables."users/starryreverie/applications/helix".anySession.EDITOR`
         { requisites, rawExtensions, ... }: {

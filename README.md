@@ -38,7 +38,7 @@ ef actually stands for *effectful feature*. In ef, a *feature* is a computation 
     graphicalSession = lib.mkOption { type = lib.types.attrsOf lib.types.str; };
   };
 
-  computation = { requisites, rawExtensions, ... }: {
+  computation = { requisites, extensions, ... }: {
     value = {
       envFile = "~/.config/environment.d/60-custom-user-environment.conf";
     };
@@ -50,7 +50,7 @@ ef actually stands for *effectful feature*. In ef, a *feature* is a computation 
     effects."nixos" = { config, pkgs, ... }: {
       # I like using `nix-maid` to configure my home.
       users.users.starryreverie.maid = {
-        # Actually should do something using `rawExtensions."variables".<otherFeatureName>.<...>`
+        # Actually should do something using `extensions."variables".<otherFeatureName>.<...>`
         file.xdg_config."environment.d/60-custom-user-environment.conf".text = "...";
       };
     };
@@ -64,7 +64,7 @@ A feature declares its dependency relationship using `requires` and `extends`. I
 
 A feature defines the types (a.k.a. schemas) of its computation value and the extension data it will receive. `schemas.value` specifies the shape of computation value, while `schemas.extensions.<extensionName>` is for each extension point. A feature only has a single output value but can have multiple extension points. All these type definitions use existing Nix module option types to do the validation, so you can set `schema.value` to a naked `lib.mkOption { ... }` or an option tree `{ someValue = lib.mkOption { ... }; ... }`.
 
-The `computation` function is how a feature produces its value and effects. This function accepts at least two parameters `requisites` and `rawExtensions`. `requisites` contains values of all features required by the current feature. `rawExtensions` consists of other features' extension data to the current feature, grouped by this feature's extension point name and other feature's name. The result of the `computation` function consists of `value`, `extensions` and `effects`.
+The `computation` function is how a feature produces its value and effects. This function accepts at least three parameters `requisites`, `extensions`, and `rawExtensions`. `requisites` contains values of all features required by the current feature. `rawExtensions` consists of other features' extension data to the current feature, grouped by this feature's extension point name and other feature's name. `extensions` is a merged version of `rawExtensions` without feature's name. The result of the `computation` function consists of `value`, `extensions` and `effects`.
 
 The canonical schema definitons of feature and feature's computation result are [`feature.nix`](./src/impl/parser/options/feature.nix) and [`computation.nix`](./src/impl/parser/options/computation.nix)
 

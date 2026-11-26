@@ -1,5 +1,10 @@
 { lib, use, ... }:
 let
+  inherit (use "parser.options")
+    parseWithOption
+    ;
+in
+let
   # Collect a feature's required features' computation outputs
   collectRequisites = # ... -> AttrSet | Data to be passed as `requisites` to this feature
     {
@@ -48,10 +53,38 @@ let
         lib.attrsets.listToAttrs
       ]
     );
+
+  # Merge the extension data from other features for each extension point using Nix module merging
+  mergeRawExtensions =
+    {
+      extensionSchemas, # AttrSet | Extension schemas of all extension points
+      featureName, # AttrSet | Feature name from which this computation result comes
+    }:
+    rawExtensions: # AttrSet | Extension data grouped by extension point and feature name
+    lib.flip lib.attrsets.mapAttrs rawExtensions (
+      extensionName: extensionValues:
+      let
+        extensionOptionTree = {
+          extension =
+            extensionSchemas.${extensionName}
+              or (builtins.throw "unreachable: schema of extension '${extensionName}' doesn't exist");
+        };
+        extensionConfig = lib.mkMerge (
+          lib.attrsets.mapAttrsToList (_: extensionValue: { extension = extensionValue; }) extensionValues
+        );
+
+        result = parseWithOption {
+          options = extensionOptionTree;
+          location = "<ef-computation-pre:feature='${featureName}',scope='extensionMerging',extension='${extensionName}'>";
+        } extensionConfig;
+      in
+      result.extension
+    );
 in
 {
   inherit
     collectRawExtensions
     collectRequisites
+    mergeRawExtensions
     ;
 }
