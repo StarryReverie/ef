@@ -120,14 +120,13 @@ ef actually stands for *effectful feature*. In ef, a *feature* is a computation 
       envFile = "~/.config/environment.d/60-custom-user-environment.conf";
     };
     extensions."shell".profile = {
-      content = "...";
-      priority = 500;
+      content = lib.mkBefore "...";
     };
 
     effects."nixos" = { config, pkgs, ... }: {
       # I like using `nix-maid` to configure my home.
       users.users.starryreverie.maid = {
-        # Actually should do something using `extensions."variables".<otherFeatureName>.<...>`
+        # Actually should do something using `extensions."variables".<...>`
         file.xdg_config."environment.d/60-custom-user-environment.conf".text = "...";
       };
     };
