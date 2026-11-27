@@ -23,17 +23,11 @@ let
     let
       allFeatures = lib.attrsets.mapAttrs (
         name: rawFeature:
-        let
-          feature = parseFeatureDefinition {
-            inherit efLib;
-            inherit extraArgs;
-            featureName = name;
-          } rawFeature;
-        in
-        if feature.name == name then
-          feature
-        else
-          builtins.throw "feature sets name='${feature.name}' in its definition, but the outer attrset's key is '${name}'"
+        parseFeatureDefinition {
+          inherit efLib;
+          inherit extraArgs;
+          featureName = name;
+        } rawFeature
       ) allRawFeatures;
 
       result = runFeatureComputations {
@@ -56,6 +50,7 @@ let
       result = lib.attrsets.mapAttrs (
         featureName: featureNode:
         instantiateFeature {
+          inherit featureName;
           inherit extensionSchemas;
           computedResults = result;
           requiredFeatureNames = featureNode.required;

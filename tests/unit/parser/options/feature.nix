@@ -20,13 +20,11 @@ in
     expr =
       let
         parsed = parseFeature {
-          name = "test/minimal";
           inherit computation;
         };
       in
       {
         inherit (parsed)
-          name
           requires
           extends
           schemas
@@ -34,7 +32,6 @@ in
         computationIsFunction = builtins.isFunction parsed.computation;
       };
     expected = {
-      name = "test/minimal";
       requires = [ ];
       extends = [ ];
       schemas = {
@@ -49,7 +46,6 @@ in
     expr =
       let
         parsed = parseFeature {
-          name = "test/full";
           requires = [
             {
               name = "dep/implicit";
@@ -79,7 +75,7 @@ in
         };
       in
       {
-        inherit (parsed) name requires extends;
+        inherit (parsed) requires extends;
         valueKeys = lib.attrsets.attrNames parsed.schemas.value;
         extensionKeys = lib.attrsets.attrNames parsed.schemas.extensions;
         extensionPointKeys = lib.attrsets.attrNames parsed.schemas.extensions.variables;
@@ -103,7 +99,6 @@ in
             };
       };
     expected = {
-      name = "test/full";
       requires = [
         {
           name = "dep/implicit";
@@ -132,7 +127,6 @@ in
 
   "a non-list `requires` value is rejected" = {
     expr = parseFeature {
-      name = "test/invalid-requires";
       requires = "not-a-list";
       inherit computation;
     };
@@ -144,7 +138,6 @@ in
 
   "a non-list `extends` value is rejected" = {
     expr = parseFeature {
-      name = "test/invalid-extends";
       extends = "not-a-list";
       inherit computation;
     };
@@ -156,7 +149,6 @@ in
 
   "a feature without `computation` is rejected" = {
     expr = parseFeature {
-      name = "test/missing-computation";
     };
     expectedError = {
       type = "ThrownError";

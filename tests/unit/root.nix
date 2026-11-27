@@ -10,7 +10,6 @@ let
     "base" =
       { lib, ... }:
       {
-        name = "base";
         schemas.value = {
           n = lib.mkOption { type = lib.types.int; };
         };
@@ -25,7 +24,6 @@ let
     "app" =
       { lib, efLib, ... }:
       {
-        name = "app";
         requires = [ (efLib.useImplicitly "base") ];
         schemas.value = {
           n = lib.mkOption { type = lib.types.int; };
@@ -41,7 +39,6 @@ let
     "extra" =
       { lib, extraArgs, ... }:
       {
-        name = "extra";
         schemas.value = {
           greeting = lib.mkOption { type = lib.types.str; };
         };
@@ -54,7 +51,6 @@ let
     "unused" =
       { lib, ... }:
       {
-        name = "unused";
         schemas = {
           value = { };
           extensions = { };
@@ -65,7 +61,6 @@ let
     "target" =
       { lib, ... }:
       {
-        name = "target";
         schemas = {
           value = {
             got = lib.mkOption { type = lib.types.str; };
@@ -85,7 +80,6 @@ let
     "extender" =
       { lib, ... }:
       {
-        name = "extender";
         extends = [ "target" ];
         schemas = {
           value = { };
@@ -104,7 +98,6 @@ let
     "a" =
       { lib, ... }:
       {
-        name = "a";
         schemas = {
           value = { };
           extensions = { };
@@ -124,7 +117,6 @@ let
     "b" =
       { lib, ... }:
       {
-        name = "b";
         schemas = {
           value = { };
           extensions = { };
@@ -144,7 +136,6 @@ let
     "user-file" =
       { lib, ... }:
       {
-        name = "user-file";
         schemas = {
           value = { };
           extensions = { };
@@ -162,7 +153,6 @@ let
     "disabled" =
       { lib, ... }:
       {
-        name = "disabled";
         schemas = {
           value = { };
           extensions = { };

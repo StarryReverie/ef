@@ -2,12 +2,14 @@
 let
   # Option tree for a feature definition
   featureOption = {
-    name = featureNameOption;
-
     requires = lib.mkOption {
       type = lib.types.listOf (
         lib.types.submodule {
-          options.name = featureNameOption;
+          options.name = lib.mkOption {
+            type = lib.types.str;
+            description = "Unique identifier of a feature";
+            example = "system/core/environment";
+          };
 
           options.isExplicit = lib.mkOption {
             type = lib.types.bool;
@@ -147,12 +149,6 @@ let
         }
       '';
     };
-  };
-
-  featureNameOption = lib.mkOption {
-    type = lib.types.str;
-    description = "Unique identifier of a feature";
-    example = "system/core/environment";
   };
 in
 {

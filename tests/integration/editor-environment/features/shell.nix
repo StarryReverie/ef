@@ -5,7 +5,6 @@
   ...
 }:
 {
-  name = "shell";
 
   schemas.value = {
     aliases = lib.mkOption {

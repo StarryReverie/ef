@@ -59,7 +59,6 @@ A minimal feature adds a package through a NixOS effect:
 # features/hello.nix
 { lib, efLib, ... }:
 {
-  name = "hello";
   computation = { requisites, extensions, ... }: {
     effects."nixos" = { config, pkgs, ... }: {
       environment.systemPackages = [ pkgs.hello ];
@@ -104,8 +103,6 @@ ef actually stands for *effectful feature*. In ef, a *feature* is a computation 
 ```nix
 { lib, efLib, ... }:
 {
-  name = "users/starryreverie/core/environment";
-
   requires = [ (efLib.useExplicitly "system/constant") ];
   extends = [ "users/starryreverie/core/shell" ];
 
@@ -137,7 +134,7 @@ ef actually stands for *effectful feature*. In ef, a *feature* is a computation 
 }
 ```
 
-Each feature should have a unique identifier, which is specified by the `name` field.
+Each feature should have a unique identifier, which is specified in the outer attrset which collects all feature definitions by name.
 
 A feature declares its dependency relationship using `requires` and `extends`. If feature `A` `requires` feature `B`, then feature `A` can use feature `B`'s computation result value as its input. If feature `C` `extends` feature `D`, then feature `D` can receive feature `C`'s extension data complied with its own schema definition.
 

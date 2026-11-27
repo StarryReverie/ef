@@ -1,6 +1,5 @@
 { lib, efLib, ... }:
 {
-  name = "configuration";
 
   computation = { requisites, extensions, ... }: {
     effects."nixos" = { config, pkgs, ... }: {

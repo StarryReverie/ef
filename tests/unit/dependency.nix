@@ -11,12 +11,11 @@ in
 let
   makeFeature =
     {
-      name,
       requires ? [ ],
       extends ? [ ],
     }:
     {
-      inherit name requires extends;
+      inherit requires extends;
       computation = { ... }: { };
     };
 
@@ -38,46 +37,43 @@ in
     expr = {
       empty = toGraph { } [ ];
       single = toGraph {
-        "a" = makeFeature { name = "a"; };
+        "a" = makeFeature { };
       } [ "a" ];
       independent =
         toGraph
           {
-            "a" = makeFeature { name = "a"; };
-            "b" = makeFeature { name = "b"; };
+            "a" = makeFeature { };
+            "b" = makeFeature { };
           }
           [
             "a"
             "b"
           ];
       outsideClosure = toGraph {
-        "a" = makeFeature { name = "a"; };
+        "a" = makeFeature { };
       } [ ];
       isAttributeSet = builtins.isAttrs (
         makeDependencyGraph {
-          "a" = makeFeature { name = "a"; };
+          "a" = makeFeature { };
         } [ "a" ]
       );
       implicitClosure = toGraph {
-        "a" = makeFeature { name = "a"; };
+        "a" = makeFeature { };
         "b" = makeFeature {
-          name = "b";
           requires = [
             (useImplicitly "a")
             (useImplicitly "a")
           ];
         };
         "c" = makeFeature {
-          name = "c";
           requires = [ (useImplicitly "b") ];
         };
       } [ "c" ];
       explicitEnabled =
         toGraph
           {
-            "x" = makeFeature { name = "x"; };
+            "x" = makeFeature { };
             "y" = makeFeature {
-              name = "y";
               requires = [ (useExplicitly "x") ];
             };
           }
@@ -138,16 +134,14 @@ in
       extensions =
         toGraph
           {
-            "a" = makeFeature { name = "a"; };
+            "a" = makeFeature { };
             "b" = makeFeature {
-              name = "b";
               extends = [
                 "a"
                 "a"
               ];
             };
             "c" = makeFeature {
-              name = "c";
               extends = [ "a" ];
             };
           }
@@ -157,33 +151,29 @@ in
             "c"
           ];
       onlyExtender = toGraph {
-        "a" = makeFeature { name = "a"; };
+        "a" = makeFeature { };
         "b" = makeFeature {
-          name = "b";
           extends = [ "a" ];
         };
       } [ "b" ];
       disabledExtender = toGraph {
-        "a" = makeFeature { name = "a"; };
+        "a" = makeFeature { };
         "c" = makeFeature {
-          name = "c";
           extends = [ "a" ];
         };
       } [ "a" ];
       mixed =
         toGraph
           {
-            "a" = makeFeature { name = "a"; };
+            "a" = makeFeature { };
             "b" = makeFeature {
-              name = "b";
               requires = [ (useImplicitly "c") ];
               extends = [ "a" ];
             };
             "c" = makeFeature {
-              name = "c";
               requires = [ (useImplicitly "d") ];
             };
-            "d" = makeFeature { name = "d"; };
+            "d" = makeFeature { };
           }
           [
             "a"
@@ -248,7 +238,7 @@ in
       unknownExplicit = throws (
         makeDependencyGraph
           {
-            "a" = makeFeature { name = "a"; };
+            "a" = makeFeature { };
           }
           [
             "a"
@@ -258,7 +248,6 @@ in
       missingRequirement = throws (
         makeDependencyGraph {
           "a" = makeFeature {
-            name = "a";
             requires = [ (useImplicitly "ghost") ];
           };
         } [ "a" ]
@@ -266,7 +255,6 @@ in
       missingExtension = throws (
         makeDependencyGraph {
           "a" = makeFeature {
-            name = "a";
             extends = [ "ghost" ];
           };
         } [ "a" ]
@@ -274,7 +262,6 @@ in
       selfRequirement = throws (
         makeDependencyGraph {
           "a" = makeFeature {
-            name = "a";
             requires = [ (useImplicitly "a") ];
           };
         } [ "a" ]
@@ -282,25 +269,22 @@ in
       selfExtension = throws (
         makeDependencyGraph {
           "a" = makeFeature {
-            name = "a";
             extends = [ "a" ];
           };
         } [ "a" ]
       );
       unenabledExplicitRequirement = throws (
         makeDependencyGraph {
-          "a" = makeFeature { name = "a"; };
+          "a" = makeFeature { };
           "b" = makeFeature {
-            name = "b";
             requires = [ (useExplicitly "a") ];
           };
         } [ "b" ]
       );
       inactiveInvalidRequirement = throws (
         makeDependencyGraph {
-          "a" = makeFeature { name = "a"; };
+          "a" = makeFeature { };
           "z" = makeFeature {
-            name = "z";
             requires = [ (useImplicitly "ghost") ];
           };
         } [ "a" ]
@@ -319,9 +303,8 @@ in
 
   "a declaration error reports the offending feature and requirement" = {
     expr = makeDependencyGraph {
-      "a" = makeFeature { name = "a"; };
+      "a" = makeFeature { };
       "z" = makeFeature {
-        name = "z";
         requires = [ (useImplicitly "ghost") ];
       };
     } [ "a" ];
@@ -336,11 +319,9 @@ in
       requires = throws (
         makeDependencyGraph {
           "a" = makeFeature {
-            name = "a";
             requires = [ (useImplicitly "b") ];
           };
           "b" = makeFeature {
-            name = "b";
             requires = [ (useImplicitly "a") ];
           };
         } [ "a" ]
@@ -348,15 +329,12 @@ in
       transitiveRequires = throws (
         makeDependencyGraph {
           "a" = makeFeature {
-            name = "a";
             requires = [ (useImplicitly "b") ];
           };
           "b" = makeFeature {
-            name = "b";
             requires = [ (useImplicitly "c") ];
           };
           "c" = makeFeature {
-            name = "c";
             requires = [ (useImplicitly "a") ];
           };
         } [ "a" ]
@@ -364,15 +342,12 @@ in
       prefixedRequires = throws (
         makeDependencyGraph {
           "a" = makeFeature {
-            name = "a";
             requires = [ (useImplicitly "b") ];
           };
           "b" = makeFeature {
-            name = "b";
             requires = [ (useImplicitly "c") ];
           };
           "c" = makeFeature {
-            name = "c";
             requires = [ (useImplicitly "b") ];
           };
         } [ "a" ]
@@ -381,11 +356,9 @@ in
         makeDependencyGraph
           {
             "a" = makeFeature {
-              name = "a";
               extends = [ "b" ];
             };
             "b" = makeFeature {
-              name = "b";
               extends = [ "a" ];
             };
           }
@@ -397,9 +370,8 @@ in
       mixed = throws (
         makeDependencyGraph
           {
-            "a" = makeFeature { name = "a"; };
+            "a" = makeFeature { };
             "b" = makeFeature {
-              name = "b";
               requires = [ (useImplicitly "a") ];
               extends = [ "a" ];
             };
@@ -411,13 +383,11 @@ in
       );
       outsideClosure = throws (
         makeDependencyGraph {
-          "a" = makeFeature { name = "a"; };
+          "a" = makeFeature { };
           "x" = makeFeature {
-            name = "x";
             requires = [ (useImplicitly "y") ];
           };
           "y" = makeFeature {
-            name = "y";
             requires = [ (useImplicitly "x") ];
           };
         } [ "a" ]
@@ -436,11 +406,9 @@ in
   "a cycle error reports a cyclic dependency path" = {
     expr = makeDependencyGraph {
       "a" = makeFeature {
-        name = "a";
         requires = [ (useImplicitly "b") ];
       };
       "b" = makeFeature {
-        name = "b";
         requires = [ (useImplicitly "a") ];
       };
     } [ "a" ];

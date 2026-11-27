@@ -5,7 +5,6 @@
   ...
 }:
 {
-  name = "environment";
 
   extends = [
     "shell"

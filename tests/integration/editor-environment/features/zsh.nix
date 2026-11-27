@@ -5,7 +5,6 @@
   ...
 }:
 {
-  name = "zsh";
 
   requires = [
     (efLib.useImplicitly "shell")

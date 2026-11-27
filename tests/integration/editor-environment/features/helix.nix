@@ -5,7 +5,6 @@
   ...
 }:
 {
-  name = "helix";
 
   extends = [
     "environment"
