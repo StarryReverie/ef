@@ -11,7 +11,7 @@ let
         features' `requires` declaration and `requisites` parameter.
       '';
       default = { };
-      example = lib.literalExperssion ''
+      example = lib.literalExpression ''
         {
           envFile = "~/.config/environment.d/60-custom-session-vars.conf";
         };
@@ -30,7 +30,7 @@ let
 
         The structure of this option is `.<otherFeatureName>.<otherExtensionName> = ...`.
       '';
-      example = lib.literalExperssion ''
+      example = lib.literalExpression ''
         {
           "shell".profile = {
             content = "...";
@@ -52,7 +52,7 @@ let
         Effects may have distinct kinds, you can separate different kinds of effects using different
         names. The structure of this option is `.<effectKind> = ...`.
       '';
-      example = lib.literalExperssion ''
+      example = lib.literalExpression ''
         {
           nixos = { config, ... }: {
             # Use `nix-maid` inside a NixOS module here
