@@ -75,6 +75,7 @@ This repository uses integration test cases as the examples. Currently the follo
 
 - [Minimal](./tests/integration/minimal/)
 - [Editor Environment](./tests/integration/editor-environment/)
+- [Port Allocation](./tests/integration/port-allocation/)
 
 You can run the example a.k.a test using the following commands:
 
