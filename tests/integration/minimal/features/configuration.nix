@@ -1,6 +1,5 @@
 { lib, efLib, ... }:
 {
-
   computation = { requisites, extensions, ... }: {
     effects."nixos" = { config, pkgs, ... }: {
       environment.loginShellInit = ''

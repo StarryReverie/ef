@@ -5,7 +5,6 @@
   ...
 }:
 {
-
   requires = [
     (efLib.useImplicitly "shell")
   ];

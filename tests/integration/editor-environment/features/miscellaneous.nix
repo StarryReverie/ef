@@ -5,7 +5,6 @@
   ...
 }:
 {
-
   computation = { requisites, extensions, ... }: {
     effects."nixos" = { config, pkgs, ... }: {
       imports = [

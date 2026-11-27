@@ -5,7 +5,6 @@
   ...
 }:
 {
-
   extends = [
     "shell"
   ];
