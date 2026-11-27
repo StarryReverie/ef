@@ -323,4 +323,35 @@ in
       empty = { };
     };
   };
+
+  "feature names are validated" = {
+    expr =
+      let
+        runWithName =
+          name:
+          runFeatures
+            {
+              enabledFeatures = [ name ];
+              extraArgs = { };
+            }
+            {
+              ${name} = { ... }: {
+                computation = { ... }: { };
+              };
+            };
+        throws = name: !(builtins.tryEval (builtins.deepSeq (runWithName name) true)).success;
+      in
+      {
+        validNames = lib.attrsets.attrNames (runWithName "valid_Name-123").result;
+        slashRejected = throws "bad/name";
+        spaceRejected = throws "bad name";
+        dotRejected = throws "bad.name";
+      };
+    expected = {
+      validNames = [ "valid_Name-123" ];
+      slashRejected = true;
+      spaceRejected = true;
+      dotRejected = true;
+    };
+  };
 }

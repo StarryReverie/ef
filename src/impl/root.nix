@@ -21,6 +21,14 @@ let
     }:
     allRawFeatures: # AttrSet | All parsed feature definitions
     let
+      allNamesValid = lib.lists.all (
+        name:
+        if builtins.match "[A-Za-z0-9_\\-]+" name != null then
+          true
+        else
+          builtins.throw "'${name}' is not a valid feature name, only alphabets, digits, underscores, and hyphens are valid characters"
+      ) (lib.attrsets.attrNames allRawFeatures);
+
       allFeatures = lib.attrsets.mapAttrs (
         name: rawFeature:
         parseFeatureDefinition {
@@ -34,7 +42,7 @@ let
         explicitlyEnabledFeatureNames = enabledFeatures;
       } allFeatures;
     in
-    result;
+    builtins.deepSeq allNamesValid result;
 
   # Run each feature's computation in toposort order of dependency graph
   runFeatureComputations = # ... -> AttrSet | Computation result of all features

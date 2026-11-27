@@ -134,7 +134,7 @@ ef actually stands for *effectful feature*. In ef, a *feature* is a computation 
 }
 ```
 
-Each feature should have a unique identifier, which is specified in the outer attrset which collects all feature definitions by name.
+Each feature should have a unique identifier, which is specified in the outer attrset which collects all feature definitions by name. A valid identifier should only contains alphabets, digits, underscores, and hyphens. I'm working on implementing scoped features, so `/` is reserved for future use.
 
 A feature declares its dependency relationship using `requires` and `extends`. If feature `A` `requires` feature `B`, then feature `A` can use feature `B`'s computation result value as its input. If feature `C` `extends` feature `D`, then feature `D` can receive feature `C`'s extension data complied with its own schema definition.
 
