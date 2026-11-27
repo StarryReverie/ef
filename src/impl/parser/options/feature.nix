@@ -8,7 +8,7 @@ let
           options.name = lib.mkOption {
             type = lib.types.str;
             description = "Unique identifier of a feature";
-            example = "system/core/environment";
+            example = "environment";
           };
 
           options.isExplicit = lib.mkOption {
@@ -33,8 +33,8 @@ let
       default = [ ];
       example = lib.literalExpression ''
         [
-          (efLib.useImplicitly "system/core/environment")
-          (efLib.useExplicitly "users/starryreverie/core/constants")
+          (efLib.useImplicitly "environment")
+          (efLib.useExplicitly "constants")
         ]
       '';
     };
@@ -50,7 +50,7 @@ let
       default = [ ];
       example = lib.literalExpression ''
         [
-          "users/starryreverie/core/shell"
+          "shell"
         ]
       '';
     };
@@ -124,18 +124,18 @@ let
       '';
       example = lib.literalExpression ''
         # `requisites.<otherFeatureName>.<...>`
-        #   - e.g. `requisites."users/starryreverie/core/constants".hostName`
+        #   - e.g. `requisites."constants".hostName`
         # `extensions.<selfExtensionName>.<...>`
-        #   - e.g. `rawExtensions.variables.anySession.EDITOR`
+        #   - e.g. `rawExtensions.variables.anySession."EDITOR"`
         # `rawExtensions.<selfExtensionName>.<otherFeatureName>.<...>`
-        #   - e.g. `rawExtensions.variables."users/starryreverie/applications/helix".anySession.EDITOR`
+        #   - e.g. `rawExtensions.variables."helix".anySession."EDITOR"`
         { requisites, rawExtensions, ... }: {
           value = {
             envFile = "~/.config/environment.d/60-custom-session-vars.conf";
           };
 
           # `extensions.<otherFeatureName>.<otherExtensionName>`
-          extensions."users/starryreverie/core/shell".profile = {
+          extensions."shell".profile = {
             content = "...";
             priority = 1000;
           };

@@ -48,15 +48,15 @@ in
         parsed = parseFeature {
           requires = [
             {
-              name = "dep/implicit";
+              name = "dep-implicit";
               isExplicit = false;
             }
             {
-              name = "dep/explicit";
+              name = "dep-explicit";
               isExplicit = true;
             }
           ];
-          extends = [ "base/feature" ];
+          extends = [ "base-feature" ];
           schemas = {
             value = {
               envFile = lib.mkOption { type = lib.types.str; };
@@ -101,15 +101,15 @@ in
     expected = {
       requires = [
         {
-          name = "dep/implicit";
+          name = "dep-implicit";
           isExplicit = false;
         }
         {
-          name = "dep/explicit";
+          name = "dep-explicit";
           isExplicit = true;
         }
       ];
-      extends = [ "base/feature" ];
+      extends = [ "base-feature" ];
       valueKeys = [ "envFile" ];
       extensionKeys = [
         "naked"

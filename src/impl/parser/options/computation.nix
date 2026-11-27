@@ -32,7 +32,7 @@ let
       '';
       example = lib.literalExperssion ''
         {
-          "users/starryreverie/core/shell".profile = {
+          "shell".profile = {
             content = "...";
             priority = 1000;
           };

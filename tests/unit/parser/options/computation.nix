@@ -21,7 +21,7 @@ in
         value = {
           envFile = "/tmp/env";
         };
-        extensions."other/feature".profile = {
+        extensions."other-feature".profile = {
           content = "...";
           priority = 1000;
         };
@@ -39,7 +39,7 @@ in
           envFile = "/tmp/env";
         };
         extensions = {
-          "other/feature".profile = {
+          "other-feature".profile = {
             content = "...";
             priority = 1000;
           };
@@ -53,7 +53,7 @@ in
 
   "an extension value that is not an attrset is rejected" = {
     expr = parseComputation {
-      extensions."other/feature" = "not-an-attrset";
+      extensions."other-feature" = "not-an-attrset";
     };
     expectedError = {
       type = "ThrownError";

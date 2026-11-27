@@ -103,8 +103,8 @@ ef actually stands for *effectful feature*. In ef, a *feature* is a computation 
 ```nix
 { lib, efLib, ... }:
 {
-  requires = [ (efLib.useExplicitly "system/constant") ];
-  extends = [ "users/starryreverie/core/shell" ];
+  requires = [ (efLib.useExplicitly "constant") ];
+  extends = [ "shell" ];
 
   schemas.value = {
     envFile = lib.mkOption { type = lib.types.str; };
@@ -118,7 +118,7 @@ ef actually stands for *effectful feature*. In ef, a *feature* is a computation 
     value = {
       envFile = "~/.config/environment.d/60-custom-user-environment.conf";
     };
-    extensions."users/starryreverie/core/shell".profile = {
+    extensions."shell".profile = {
       content = "...";
       priority = 500;
     };
